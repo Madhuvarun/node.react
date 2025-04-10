@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { Product, ProductState } from "../types";
+import { Product, ProductState } from "../../types";
+import { fetchProductsAPI } from "../apis/productAPI";
 
 const initialState: ProductState = {
   products: [],
@@ -32,18 +33,11 @@ const productSlice = createSlice({
   },
 });
 
-export const fetchProducts = createAsyncThunk<Product[]>(
+export const fetchProducts = createAsyncThunk<Product[], string>(
   "/products/fetchProducts",
-  async (_, thunkAPI) => {
+  async (queryString, thunkAPI) => {
     try {
-      const response = await new Promise<Product[]>((resolve) => {
-        setTimeout(() => {
-          resolve([
-            { id: 1, name: "Adidas", price: 3000.0 },
-            { id: 2, name: "Nike", price: 3700.0 },
-          ]);
-        }, 1000);
-      });
+      const response = await fetchProductsAPI(queryString);
       return response;
     } catch (err) {
       return thunkAPI.rejectWithValue(err);
